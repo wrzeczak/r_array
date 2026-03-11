@@ -3,7 +3,7 @@
 //
 // This header defines a dynamic array structure called an `r_array`.
 //
-// # POUND-DEFINES
+// # CONFIGURATION POUND-DEFINES
 // RA_NO_CRASH_ON_OVERFLOW - By default, things that would call illegal memory
 //                           access will crash the program. Defining this will
 //                           cause those functions to instead return `NULL`.
@@ -11,10 +11,19 @@
 // RA_SILENT - This will silence any non-crashing messages. Some messages will
 //             still print on crash regardless; maybe this can be changed.
 //
+// RA_DEFAULT_ARRAY_CAPACITY - The default number of elements in an array. 512
+//                             unless otherwise specified.
+//
+// RA_INTERNAL_POINTER_SPACE_SIZE - The default space in bytes allocated to my
+//                                  internal dynamic memory system. This is by
+//                                  by default 8192 bytes.
+//
+// # USEFUL FUNCTION-LIKE MACROS
 // RA_STATIC_INIT(type_pair) - This is useful for initializing an array before
 //                             allocating its memory i.e. for creating globals
 //                             or whatever. Necessary because ra_type is const
 //                             so it cannot be modified or zeroed.
+
 //------------------------------------------------------------------------------
 
 #include <stdio.h>
@@ -66,6 +75,9 @@ typedef struct {
 
 aa_arena ________________internal_ra_space_for_pointers;
 bool internal_ra_space_for_pointers_has_been_initialized = false;
+#ifndef RA_INTERNAL_POINTER_SPACE_SIZE
+#define RA_INTERNAL_POINTER_SPACE_SIZE 8192
+#endif
 
 /**
  * Create an arena.
@@ -113,7 +125,7 @@ typedef struct {
 #endif
 
 /**
- * Create an r_array. This allocates the necessary memory, which must be destroyed with `ra_destroy()`.
+ * Create an r_array. This allocates the necessary memory, which must be destroyed with `ra_destroy()`. By default an array can hold 512 elements. If you need more than this, see `ra_create_cap()`.
  * 
  * @param type_pair The type of the array.
  * @return The new array.
@@ -122,6 +134,7 @@ inline r_array ra_create(ra_type type_pair);
 
 // use this to defer initialization for later i.e. to create global-variable arrays
 #define RA_STATIC_INIT(type_pair) (r_array) { .type = type_pair, .count = 0, .memory = (aa_arena) { 0 } };
+// after calling this, initialize the array's memory: "ra.memory = aa_alloc(RA_DEFAULT_ARRAY_CAPACITY * abs(ra.type.size))"
 
 /**
  * Create an r_array. This allocates the necessary memory, which must be destroyed with `ra_destroy()`.
@@ -208,7 +221,7 @@ r_array ra_copy(r_array * ra);
 ```
  * 
  * @param ra The array whose elements to copy. 
- * @return A new non-resizeable array in which all the elements of `ra` are uniquely represented (i.e. each one appears exactly once). 
+ * @return A new (i.e. with new memory allocation) non-resizeable array in which all the elements of `ra` are uniquely represented (i.e. each one appears exactly once). 
  */
 r_array ra_copy_uniques(r_array * ra);
 
@@ -295,7 +308,7 @@ void * ra_append(r_array * ra, ...) {
 
     // do not init memory unless it's needed
     if(!internal_ra_space_for_pointers_has_been_initialized && (ra->type.size < 0)) {
-        ________________internal_ra_space_for_pointers = aa_create(2048);
+        ________________internal_ra_space_for_pointers = aa_create(RA_INTERNAL_POINTER_SPACE_SIZE);
         internal_ra_space_for_pointers_has_been_initialized = true;
     }
 
@@ -303,7 +316,7 @@ void * ra_append(r_array * ra, ...) {
         if(strcmp(#_type, ra->type.typename) == 0) { \
             _type value = va_arg(args, _type); \
             ra->count++; \
-            return aa_alloc(&ra->memory, &value, sizeof(_type)); \
+            return aa_alloc(&ra->memory, &value, pair.size); \
         }
     
     #define RA_APPEND_PNT_TYPE(pair, _type) \

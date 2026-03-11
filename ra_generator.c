@@ -17,7 +17,11 @@ void generate_ra(const char * output_filename);
 int main(void) {
     header_files.memory = aa_create(1024);
 
-    ra_printf(&header_files, "%s");
+    // register_new_type("RA_DOUBLE", "double", NULL, NULL);
+    // the above line creates a type-pair RA_DOUBLE, associated with doubles, which requires no includes and uses == as a comparison
+    
+    // register_new_type("RA_VECTOR2", "Vector2", "<raylib.h>", "Vector2Equals");
+    // the above line create a type-pair RA_VECTOR2, associated with Raylib's Vector2, which requires inclusion of <raylib.h> and uses `Vector2Equals` as a comparison
 
     generate_ra("r_array.h");
 

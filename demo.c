@@ -4,12 +4,12 @@
 
 #include <stdlib.h>
 
-char * vector_printer(void * value) {
+char * vector_printer(void * value, char * format_string) {
     Vector2 v = *(Vector2 *) value;
     static char output_buffer[256];
     memset(output_buffer, 0, 256);
 
-    sprintf(output_buffer, "<%.4f, %.4f>", v.x, v.y);
+    sprintf(output_buffer, format_string, v.x, v.y);
 
     return output_buffer;
 }
@@ -40,7 +40,7 @@ int main(void) {
     }
 
     r_array rc_slice = ra_slice(&rc, 2, -2);
-    ra_printf_f(&rc_slice, &vector_printer);
+    ra_printf_f(&rc_slice, "[%.2f, %.2f]", &vector_printer);
     ra_destroy(&rc);
 
     return 0;

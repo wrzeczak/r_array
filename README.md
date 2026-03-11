@@ -106,3 +106,4 @@ Some details here:
 ...
 ```
 2) Use `r_array.h`! See `demo.c` for examples on how to do this.
+3) See the generated file for documentation comments. I hope and pray that it's enough explanation.

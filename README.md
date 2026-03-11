@@ -65,7 +65,7 @@ There is a wrinkle here that the above code will not work for strings. There is 
 
 ### How To Use
 
-This library relies on code generation, something I have also relied on in my [anecs](https://github.com/wrzeczak/anecs) project. The reason there is no provided file `r_array.h` is because this file is supposed to be the result of running `ra_generator.c`. The "base" library, which provides `RA_INT` and `RA_STR`, is in `ra_template.h`, and you can just use that if that's all you need. However, if you need another type (say, `RA_DOUBLE`, or in Raylib, `RA_VECTOR2`), you can use `ra_generator.c` to generate an ra library that can handle those types. Here's how it works:
+This library relies on code generation, something I have also relied on in my [anecs](https://github.com/wrzeczak/anecs) project. The reason there is no provided file `r_array.h` is because this file is supposed to be the result of running `ra_generator.c`. The "base" library, which provides `RA_INT` and `RA_STR`, is in `r_array_template.h`, and you can just use that if that's all you need. However, if you need another type (say, `RA_DOUBLE`, or in Raylib, `RA_VECTOR2`), you can use `ra_generator.c` to generate an ra library that can handle those types. Here's how it works:
 
 ```c
 // ra_generator.c

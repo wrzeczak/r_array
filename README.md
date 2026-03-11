@@ -95,3 +95,14 @@ Some details here:
 2) You cannot create `RA_FLOAT` associated with `float` in modern C. This is because `va_args` does not support passing float, only `double`. If you need floats, create `RA_DOUBLE`.
 3) The only reason for including files that define types is such that the debugger/syntax highlighter when editing doesn't blow up; if this symbol can already be found, then there's no reason to double-include it.
 4) I'll be fully honest in saying I have not fully tested every code-generation quirk, especially for the pointer types. SORRY!
+5) If you have an STB-style library that requires a pound-define, you'll need to add it manually.
+
+### So, Step-by-step
+
+1) Compile + run `ra_generator.c` with the types you need; if you only need `RA_INT` and `RA_STR`, just don't register any types:
+```
+> gcc -o gen ra_generator.c
+> ./gen
+...
+```
+2) Use `r_array.h`! See `demo.c` for examples on how to do this.

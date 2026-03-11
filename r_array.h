@@ -32,6 +32,8 @@
 #include <stdarg.h>
 #include <stdbool.h>
 //gen 1 "Include headers for types."
+#define RAYMATH_IMPLEMENTATION
+#include <raymath.h> // for Vector2
 
 //----------------------------
 // type-pair definition
@@ -56,6 +58,8 @@ typedef const _ra_type ra_type;
 ra_type RA_INT = DEFINE_RA_TYPE(int);
 ra_type RA_STR = DEFINE_RA_PNT_TYPE(char *);
 //gen 2 "Define types."
+ra_type RA_DOUBLE = DEFINE_RA_TYPE(double); // from stdlib
+ra_type RA_VECTOR2 = DEFINE_RA_TYPE(Vector2); // from <raymath.h>
 
 //----------------------------
 // arena definitions
@@ -352,6 +356,8 @@ void * ra_append(r_array * ra, ...) {
     RA_APPEND_TYPE(RA_INT, int);
     RA_APPEND_PNT_TYPE(RA_STR, char *);
     //gen 3 "Append types."
+	RA_APPEND_TYPE(RA_DOUBLE, double);
+	RA_APPEND_TYPE(RA_VECTOR2, Vector2);
 
     #ifndef RA_SILENT
     printf("ra_append: Append failed!\n");
@@ -512,6 +518,8 @@ int ra_member_at(r_array * ra, ...) {
     RA_MEMBER_AT_TYPE(RA_INT, int);
     RA_MEMBER_AT_TYPE_CMP(RA_STR, char *, strcmp);
     //gen 4 "Get members."
+	RA_MEMBER_AT_TYPE(RA_DOUBLE, double);
+	RA_MEMBER_AT_TYPE_CMP(RA_VECTOR2, Vector2, Vector2Equals);
     
     return -1;
 }
@@ -543,6 +551,8 @@ void ra_printf(r_array * ra, const char * format_string) {
     RA_PRINTF_TYPE(RA_INT, int);
     RA_PRINTF_TYPE(RA_STR, char *);
     //gen 5 "Print values."
+	RA_PRINTF_TYPE(RA_DOUBLE, double);
+	RA_PRINTF_TYPE(RA_VECTOR2, Vector2);
 }
 
 void ra_printf_f(r_array * ra, ra_value_printer printer) {
